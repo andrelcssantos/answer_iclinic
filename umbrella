@@ -1,0 +1,29 @@
+import requests
+import datetime
+
+cidade = 'Ribeirão Preto'
+
+url = 'https://api.openweathermap.org/data/2.5/forecast?q={}&appid=0c4507575f47874c9cad3cd69e24f82a&units=imperial'.format(cidade)
+
+res = requests.get(url)
+resultado = res.json()
+
+data_aux = ''
+data_atual = ''
+
+print('You should take an umbrella in these days: ....')
+for i in resultado['list']:
+    humidade = i['main']['humidity']
+    data_hora = i['dt_txt']
+    prox_data, hora = data_hora.split(' ')
+
+    if data_atual != prox_data:
+        data_atual = prox_data
+        ano, mes, dia = data_atual.split('-')
+        data = {'y': ano, 'm': mes, 'd': dia}
+
+    if humidade > 70:
+        if data_aux != data:
+            dia_semana = datetime.date(int(ano), int(mes), int(dia)).strftime('%A')
+            print('{m}/{d}/{y}'.format(**data) + ' - ' + dia_semana + ' / ' + 'Humidity: %s' % humidade)
+            data_aux = data
